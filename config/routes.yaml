@@ -6,5 +6,5 @@ controllers:
 
 # config/routes.yaml
 auth:
-    path: /api/auth
+    path: /auth
     methods: ['POST']
