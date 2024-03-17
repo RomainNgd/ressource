@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -26,6 +28,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\OneToMany(targetEntity: LoginAttemps::class, mappedBy: 'user')]
+    private Collection $loginAttemps;
+
+    #[ORM\OneToMany(targetEntity: Ressource::class, mappedBy: 'user')]
+    private Collection $ressources;
+
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'user')]
+    private Collection $comments;
+
+    #[ORM\OneToMany(targetEntity: Share::class, mappedBy: 'sender')]
+    private Collection $shares;
+
+    public function __construct()
+    {
+        $this->loginAttemps = new ArrayCollection();
+        $this->ressources = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->shares = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -105,5 +127,125 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, LoginAttemps>
+     */
+    public function getLoginAttemps(): Collection
+    {
+        return $this->loginAttemps;
+    }
+
+    public function addLoginAttemp(LoginAttemps $loginAttemp): static
+    {
+        if (!$this->loginAttemps->contains($loginAttemp)) {
+            $this->loginAttemps->add($loginAttemp);
+            $loginAttemp->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLoginAttemp(LoginAttemps $loginAttemp): static
+    {
+        if ($this->loginAttemps->removeElement($loginAttemp)) {
+            // set the owning side to null (unless already changed)
+            if ($loginAttemp->getUser() === $this) {
+                $loginAttemp->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ressource>
+     */
+    public function getRessources(): Collection
+    {
+        return $this->ressources;
+    }
+
+    public function addRessource(Ressource $ressource): static
+    {
+        if (!$this->ressources->contains($ressource)) {
+            $this->ressources->add($ressource);
+            $ressource->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRessource(Ressource $ressource): static
+    {
+        if ($this->ressources->removeElement($ressource)) {
+            // set the owning side to null (unless already changed)
+            if ($ressource->getUser() === $this) {
+                $ressource->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getUser() === $this) {
+                $comment->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Share>
+     */
+    public function getShares(): Collection
+    {
+        return $this->shares;
+    }
+
+    public function addShare(Share $share): static
+    {
+        if (!$this->shares->contains($share)) {
+            $this->shares->add($share);
+            $share->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShare(Share $share): static
+    {
+        if ($this->shares->removeElement($share)) {
+            // set the owning side to null (unless already changed)
+            if ($share->getSender() === $this) {
+                $share->setSender(null);
+            }
+        }
+
+        return $this;
     }
 }
