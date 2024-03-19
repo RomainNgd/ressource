@@ -1,5 +1,5 @@
 api_platform:
-    title: Hello API Platform
+    title: Ressource Relational
     version: 1.0.0
     formats:
         jsonld: ['application/ld+json']
@@ -14,6 +14,11 @@ api_platform:
         extra_properties:
             standard_put: true
             rfc_7807_compliant_errors: true
+        pagination_client_items_per_page: true
+        pagination_maximum_items_per_page: 50
+    collection:
+        pagination:
+            items_per_page_parameter_name: itemsPerPage # Default value
     event_listeners_backward_compatibility_layer: false
     keep_legacy_inflector: false
     mapping:
