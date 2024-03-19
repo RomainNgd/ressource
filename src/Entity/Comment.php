@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 #[ApiResource]
@@ -16,23 +17,30 @@ class Comment
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["read:ressource:item"])]
     private ?string $content = null;
-
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?ressource $ressource = null;
+    private ?Ressource $ressource = null;
 
     #[ORM\Column]
     private ?bool $accepted = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[Groups(["read:ressource:item"])]
     private ?User $user = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $deletedAt = null;
+    private ?\DateTime $deletedAt = null;
+
+    public function __construct(
+        #[ORM\Column]
+        #[Groups(["read:ressource:item"])]
+        private \DateTime $createdAt = new \DateTime()
+    )
+    {
+    }
 
     public function getId(): ?int
     {
@@ -51,24 +59,24 @@ class Comment
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(\DateTime $createdAt): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getRessource(): ?ressource
+    public function getRessource(): ?Ressource
     {
         return $this->ressource;
     }
 
-    public function setRessource(?ressource $ressource): static
+    public function setRessource(?Ressource $ressource): static
     {
         $this->ressource = $ressource;
 
@@ -99,12 +107,12 @@ class Comment
         return $this;
     }
 
-    public function getDeletedAt(): ?\DateTimeImmutable
+    public function getDeletedAt(): ?\DateTime
     {
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(\DateTimeImmutable $deletedAt): static
+    public function setDeletedAt(\DateTime $deletedAt): static
     {
         $this->deletedAt = $deletedAt;
 

@@ -2,8 +2,14 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\RessourceTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,23 +18,34 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: RessourceTypeRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read']],
-    denormalizationContext: ['groups' => ['read']],
-)]#[Get]
+    paginationClientItemsPerPage: false,
+    paginationEnabled: false,
+)]
+#[GetCollection(
+    normalizationContext : ['groups' => 'read:ressourceType:collection']
+)]
+#[Get(
+    normalizationContext : ['groups' => ['read:ressourceType:collection']]
+)]
+#[Put(
+    denormalizationContext : ['groups' => ['update:ressourceType:item']]
+)]
+#[Post(
+    denormalizationContext : ['groups' => ['create:ressourceType:item']]
+)]
 class RessourceType
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('get')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('get')]
-    private ?string $slug = null;
+    #[Groups(["read:ressourceType:collection"])]
+    private string $slug = '';
 
     #[ORM\Column(length: 255)]
-    #[Groups('get')]
+    #[Groups(["read:ressource:collection", "read:ressourceType:collection", "update:ressourceType:item", "create:ressourceType:item"])]
     private ?string $title = null;
 
     #[ORM\OneToMany(targetEntity: Ressource::class, mappedBy: 'ressourceType')]

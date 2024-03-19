@@ -15,67 +15,72 @@ class Share
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $sharedAt = null;
+    #[ORM\ManyToOne(inversedBy: 'shares')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $sender = null;
 
     #[ORM\ManyToOne(inversedBy: 'shares')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?user $sender = null;
+    private ?User $recipient = null;
 
     #[ORM\ManyToOne(inversedBy: 'shares')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?user $recipient = null;
+    private ?Ressource $ressource = null;
 
-    #[ORM\ManyToOne(inversedBy: 'shares')]
-    private ?ressource $ressource = null;
+
+    public function __construct(
+        #[ORM\Column]
+        private \DateTime $sharedAt = new \DateTime()
+    )
+    {
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getSharedAt(): ?\DateTimeImmutable
+    public function getSharedAt(): \DateTime
     {
         return $this->sharedAt;
     }
 
-    public function setSharedAt(\DateTimeImmutable $sharedAt): static
+    public function setSharedAt(\DateTime $sharedAt): static
     {
         $this->sharedAt = $sharedAt;
 
         return $this;
     }
 
-    public function getSender(): ?user
+    public function getSender(): ?User
     {
         return $this->sender;
     }
 
-    public function setSender(?user $sender): static
+    public function setSender(?User $sender): static
     {
         $this->sender = $sender;
 
         return $this;
     }
 
-    public function getRecipient(): ?user
+    public function getRecipient(): ?User
     {
         return $this->recipient;
     }
 
-    public function setRecipient(?user $recipient): static
+    public function setRecipient(?User $recipient): static
     {
         $this->recipient = $recipient;
 
         return $this;
     }
 
-    public function getRessource(): ?ressource
+    public function getRessource(): ?Ressource
     {
         return $this->ressource;
     }
 
-    public function setRessource(?ressource $ressource): static
+    public function setRessource(?Ressource $ressource): static
     {
         $this->ressource = $ressource;
 
