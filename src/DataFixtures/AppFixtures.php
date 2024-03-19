@@ -53,6 +53,7 @@ class AppFixtures extends Fixture
             $ressource->setTitle('Livre ' . $i);
             $ressource->setDescription('Quatrième de couverture numéro : ' . $i);
             $ressource->setRessourceType($listTypes[array_rand($listTypes)]);
+            $ressource->setUser($userAdmin);
             $manager->persist($ressource);
         }
 
