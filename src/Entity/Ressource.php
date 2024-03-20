@@ -2,13 +2,15 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Odm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
+use App\Controller\AcceptRessourceController;
 use App\Repository\RessourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,10 +22,21 @@ use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: RessourceRepository::class)]
 #[ApiResource(
+    operations: [
+        new Patch(
+            uriTemplate: '/ressources/accept/{id}',
+            controller: AcceptRessourceController::class,
+            description: 'Accept a ressource by a moderator',
+            normalizationContext: ['groups' => ['ressource:accept']],
+            read: false,
+            name: 'accept',
+        ),
+    ],
     paginationClientEnabled: true,
     paginationClientItemsPerPage: 30,
     paginationItemsPerPage: 30,
     paginationMaximumItemsPerPage: 50
+
 )]
 #[GetCollection(
     normalizationContext : ['groups' => 'read:ressource:collection']
@@ -31,7 +44,7 @@ use ApiPlatform\Metadata\ApiResource;
 #[Get(
     normalizationContext : ['groups' => ['read:ressource:collection', 'read:ressource:item']]
 )]
-#[Put(
+#[Patch(
     denormalizationContext : ['groups' => ['update:ressource:item']]
 )]
 #[Post(
@@ -39,6 +52,7 @@ use ApiPlatform\Metadata\ApiResource;
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['visible', 'accepted'])]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
+#[ApiFilter(OrderFilter::class, properties: ['createdAt', 'updatedAt'], arguments: ['orderParameterName'=>'order'])]
 class Ressource
 {
     #[ORM\Id]
@@ -69,11 +83,12 @@ class Ressource
     private bool $visible = false;
 
     #[ORM\Column]
+    #[Groups(['update:ressource:item', 'ressource:accept'])]
     private bool $accepted = false;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["read:ressource:collection"])]
+    #[Groups(["read:ressource:collection", 'create:ressource:item'])]
     private ?User $user = null;
 
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'ressource')]
