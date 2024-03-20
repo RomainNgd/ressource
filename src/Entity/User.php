@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,25 +14,36 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ApiResource]
+#[Get(
+    normalizationContext : ['groups' => ['read:user:collection', 'read:user:item']]
+)]
+
+#[GetCollection(
+    normalizationContext : ['groups' => 'read:user:collection']
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read:user:collection'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(['read:user:item'])]
     private ?string $email = null;
 
     #[ORM\Column]
+    #[Groups(['read:user:item'])]
     private array $roles = [];
 
     #[ORM\Column]
-    #[Groups(["read:ressource:collection"])]
+    #[Groups(["read:ressource:collection","read:user:collection"])]
     private string $firstname = '';
 
     #[ORM\Column]
-    #[Groups(["read:ressource:collection"])]
+    #[Groups(["read:ressource:collection","read:user:collection"])]
     private string $lastname = '';
 
     /**
