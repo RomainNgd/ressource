@@ -23,10 +23,9 @@ class KernelSubscriber implements EventSubscriberInterface
         $path = $request->getPathInfo();
 
         // Vérifie si la requête est faite pour la page /API
-        if ($path === '/api') {
+        if ($path === '/api/docs') {
             return;
         }
-
         // Vérifie si la clé API est présente dans l'en-tête
         if ($request->headers->get('X-API-Key') !== $this->apiKey) {
             throw new AccessDeniedException('Invalid API key');
