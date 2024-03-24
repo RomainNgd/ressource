@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\AcceptRessourceController;
 use App\Repository\RessourceRepository;
+use App\State\RessourceValidator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -26,10 +27,18 @@ use ApiPlatform\Metadata\ApiResource;
         new Patch(
             uriTemplate: '/ressources/accept/{id}',
             controller: AcceptRessourceController::class,
+            openapiContext: [
+                'summary' => 'Accept a ressource by a moderator',
+                'requestBody' => [
+                    'content' => [
+                        'application/merge-patch+json' => []
+                    ]
+]
+            ],
             description: 'Accept a ressource by a moderator',
             normalizationContext: ['groups' => ['ressource:accept']],
             read: false,
-            name: 'accept',
+            name: 'accept'
         ),
     ],
     paginationClientEnabled: true,
@@ -48,11 +57,12 @@ use ApiPlatform\Metadata\ApiResource;
     denormalizationContext : ['groups' => ['update:ressource:item']]
 )]
 #[Post(
-    denormalizationContext : ['groups' => ['create:ressource:item']]
+    denormalizationContext : ['groups' => ['create:ressource:item']],
+    processor: RessourceValidator::class,
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['visible', 'accepted'])]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
-#[ApiFilter(OrderFilter::class, properties: ['createdAt', 'updatedAt'], arguments: ['orderParameterName'=>'order'])]
+#[ApiFilter(OrderFilter::class, properties: ['updatedAt'], arguments: ['orderParameterName'=>'order'])]
 class Ressource
 {
     #[ORM\Id]
