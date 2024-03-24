@@ -35,7 +35,7 @@ use ApiPlatform\Metadata\ApiResource;
                     ]
 ]
             ],
-            description: 'Accept a ressource by a moderator',
+            description: 'Accept a ressource by a moderator (must have role moderator)',
             normalizationContext: ['groups' => ['ressource:accept']],
             read: false,
             name: 'accept'
