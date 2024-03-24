@@ -11,6 +11,17 @@ security:
                 property: email
 
     firewalls:
+        login:
+            pattern: /auth
+            stateless: true
+            login_throttling:
+                max_attempts: 5
+            json_login:
+                check_path: /auth # The name in routes.yaml is enough for mapping
+                username_path: email
+                password_path: password
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
         dev:
             pattern: ^/_(profiler|wdt)
             security: false
@@ -28,14 +39,15 @@ security:
 
     role_hierarchy:
         ROLE_USER: []
-        ROLE_MODO: [ROLE_USER]
+        ROLE_MODERATOR: [ROLE_USER]
         ROLE_ADMIN: [ROLE_MODO]
 
     access_control:
         - { path: ^/api/docs, roles: PUBLIC_ACCESS } # Allows accessing API documentations and Swagger UI docs
         - { path: ^/auth, roles: PUBLIC_ACCESS }
         - { path: ^/api/ressources, roles: PUBLIC_ACCESS}
-        - { path: ^/api/ressources/accept, roles: ROLE_MODO}
+        - { path: ^/api/createAccount, roles: PUBLIC_ACCESS}
+        - { path: ^/api/ressources/accept, roles: ROLE_MODERATOR}
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 when@test:
     security:
