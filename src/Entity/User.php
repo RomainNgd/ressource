@@ -5,7 +5,9 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Repository\UserRepository;
+use App\State\UserPasswordHasher;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,14 +16,44 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ApiResource]
+#[ApiResource(
+)]
+#[Post(
+    uriTemplate: '/createAccount',
+    openapiContext: [
+        'summary' => 'Create Account',
+        'requestBody' => [
+            'content' => [
+                'application/json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'firstname' => 'string',
+                            'lastname' => 'string',
+                            'email' => 'string',
+                            'plainPassword' => 'string',
+                        ],
+                    ]
+                ]
+            ]
+        ]
+    ],
+    description: 'Create Account',
+    normalizationContext: ['groups' => ['user:create']],
+    denormalizationContext: ['groups' => ['user:create']],
+    validationContext: ['groups' => ['user:create']],
+    read: false,
+    name: 'Create Account',
+    processor: UserPasswordHasher::class,
+)]
 #[Get(
-    normalizationContext : ['groups' => ['read:user:collection', 'read:user:item']]
+    normalizationContext : ['groups' => ['read:user:collection', 'read:user:item']],
 )]
 
 #[GetCollection(
     normalizationContext : ['groups' => 'read:user:collection']
 )]
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -31,7 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(['read:user:item'])]
+    #[Groups(['read:user:item', 'user:create'])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -39,11 +71,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = [];
 
     #[ORM\Column]
-    #[Groups(["read:ressource:collection","read:user:collection"])]
+    #[Groups(["read:ressource:collection","read:user:collection", 'user:create'])]
     private string $firstname = '';
 
     #[ORM\Column]
-    #[Groups(["read:ressource:collection","read:user:collection"])]
+    #[Groups(["read:ressource:collection","read:user:collection", 'user:create'])]
     private string $lastname = '';
 
     /**
@@ -51,6 +83,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[Groups(['user:create'])]
+    private ?string $plainPassword = null;
 
     #[ORM\OneToMany(targetEntity: LoginAttemps::class, mappedBy: 'user')]
     private Collection $loginAttemps;
@@ -302,5 +337,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastname(string $lastname): void
     {
         $this->lastname = $lastname;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * @param string|null $plainPassword
+     */
+    public function setPlainPassword(?string $plainPassword): void
+    {
+        $this->plainPassword = $plainPassword;
     }
 }
