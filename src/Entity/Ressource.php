@@ -11,17 +11,22 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\AcceptRessourceController;
+use App\Controller\EmptyController;
 use App\Repository\RessourceRepository;
 use App\State\RessourceValidator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Metadata\ApiResource;
+use Vich\UploaderBundle\Mapping\Annotation\Uploadable;
+use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
 
 #[ORM\Entity(repositoryClass: RessourceRepository::class)]
+#[Uploadable]
 #[ApiResource(
     operations: [
         new Patch(
@@ -57,8 +62,28 @@ use ApiPlatform\Metadata\ApiResource;
     denormalizationContext : ['groups' => ['update:ressource:item']]
 )]
 #[Post(
-    denormalizationContext : ['groups' => ['create:ressource:item']],
+    controller: EmptyController::class,
+    openapiContext: [
+        'summary' => 'Create Ressource',
+        'requestBody' => [
+            'content' => [
+                'multipart/form-data' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'file' => [
+                                'type' => 'string',
+                                'format' => 'binary',
+                            ],
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    denormalizationContext: ['groups' => ['create:ressource:item']],
     processor: RessourceValidator::class,
+
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['visible', 'accepted'])]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
@@ -107,6 +132,16 @@ class Ressource
 
     #[ORM\OneToMany(targetEntity: Share::class, mappedBy: 'ressource')]
     private Collection $shares;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["read:ressource:collection", 'update:ressource:item'])]
+    private ?string $filePath = null;
+
+    private ?string $fileUrl = null;
+
+    #[UploadableField(mapping: 'ressources_image', fileNameProperty: "filePath")]
+    #[Groups(['create:ressource:item'])]
+    private ?File $file;
 
     public function __construct(
         #[ORM\Column]
@@ -295,5 +330,49 @@ class Ressource
     public function setContent(?string $content): void
     {
         $this->content = $content;
+    }
+
+    public function getFilePath(): ?string
+    {
+        return $this->filePath;
+    }
+
+    public function setFilePath(?string $filePath): static
+    {
+        $this->filePath = $filePath;
+
+        return $this;
+    }
+
+    /**
+     * @return File|null
+     */
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    /**
+     * @param File|null $file
+     */
+    public function setFile(?File $file): void
+    {
+        $this->file = $file;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFileUrl(): ?string
+    {
+        return $this->fileUrl;
+    }
+
+    /**
+     * @param string|null $fileUrl
+     */
+    public function setFileUrl(?string $fileUrl): void
+    {
+        $this->fileUrl = $fileUrl;
     }
 }
