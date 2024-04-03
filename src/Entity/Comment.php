@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use App\Controller\AcceptCommentController;
 use App\Repository\CommentRepository;
@@ -11,23 +12,25 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 #[ApiResource(
-    new Patch(
-        uriTemplate: '/comment/accept/{id}',
-        controller: AcceptCommentController::class,
-        openapiContext: [
-            'summary' => 'Accept a comment by a moderator',
-            'requestBody' => [
-                'content' => [
-                    'application/merge-patch+json' => []
+    operations: [
+        new Patch(
+            uriTemplate: '/comments/accept/{id}',
+            controller: AcceptCommentController::class,
+            openapiContext: [
+                'summary' => 'Accept a comment by a moderator',
+                'requestBody' => [
+                    'content' => [
+                        'application/merge-patch+json' => []
+                    ]
                 ]
-            ]
-        ],
-        description: 'Accept a ressource by a moderator (must have role moderator)',
-        normalizationContext: ['groups' => ['ressource:accept']],
-        read: false,
-        name: 'accept'
-    ),
+            ],
+            description: 'Accept a comment by a moderator (must have role moderator)',
+            normalizationContext: ['groups' => ['comment:accept']],
+            name: 'comment accept'
+        ),
+    ]
 )]
+#[GetCollection]
 class Comment
 {
     #[ORM\Id]
@@ -44,6 +47,7 @@ class Comment
     private ?Ressource $ressource = null;
 
     #[ORM\Column]
+    #[Groups(["comment:accept"])]
     private ?bool $accepted = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]

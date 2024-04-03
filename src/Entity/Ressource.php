@@ -42,7 +42,7 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
             description: 'Accept a ressource by a moderator (must have role moderator)',
             normalizationContext: ['groups' => ['ressource:accept']],
             read: false,
-            name: 'accept'
+            name: 'accept ressource'
         ),
     ],
     normalizationContext: ['groups' => ['read:ressource:collection']],

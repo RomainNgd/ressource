@@ -24,12 +24,12 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[Get(
     normalizationContext : ['groups' => ['read:ressourceType:collection']]
 )]
-#[Put(
-    denormalizationContext : ['groups' => ['update:ressourceType:item']]
-)]
-#[Post(
-    denormalizationContext : ['groups' => ['create:ressourceType:item']]
-)]
+//#[Put(
+//    denormalizationContext : ['groups' => ['update:ressourceType:item']]
+//)]
+//#[Post(
+//    denormalizationContext : ['groups' => ['create:ressourceType:item']]
+//)]
 class RessourceType
 {
     #[ORM\Id]
