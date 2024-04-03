@@ -6,18 +6,17 @@ use ApiPlatform\Doctrine\Odm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
-use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\AcceptRessourceController;
-use App\Controller\EmptyController;
 use App\Repository\RessourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -45,47 +44,47 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
             read: false,
             name: 'accept'
         ),
-        new Post(
-            uriTemplate: '/ressources',
-            inputFormats: ['multipart' => ['multipart/form-data']],
-            openapiContext: [
-                'summary' => 'Create Ressource',
-                'requestBody' => [
-                    'content' => [
-                        'multipart/form-data' => [
-                            'schema' => [
-                                'type' => 'object',
-                                'properties' => [
-                                    'file' => [
-                                        'type' => 'string',
-                                        'format' => 'binary',
-                                    ],
-                                    'title' => [
-                                        'type' => 'string',
-                                    ],
-                                    'description' => [
-                                        'type' => 'string',
-                                    ],
-                                    'content' => [
-                                        'type' => 'string',
-                                    ],
-                                    'ressourceType' => [
-                                        'type' => 'string',
-                                        'example' => '/api/ressource_types/{id}' ,
-                                    ],
-                                    'user' => [
-                                        'type' => 'string',
-                                        'example' => '/api/users/{id}'
-                                    ],
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-            normalizationContext: ['groups' => ['read:ressource:collection']],
-            denormalizationContext: ['groups' => ['create:ressource:item']],
-        )
+//        new Post(
+//            uriTemplate: '/ressources',
+//            inputFormats: ['multipart' => ['multipart/form-data']],
+//            openapiContext: [
+//                'summary' => 'Create Ressource',
+//                'requestBody' => [
+//                    'content' => [
+//                        'multipart/form-data' => [
+//                            'schema' => [
+//                                'type' => 'object',
+//                                'properties' => [
+//                                    'file' => [
+//                                        'type' => 'string',
+//                                        'format' => 'binary',
+//                                    ],
+//                                    'title' => [
+//                                        'type' => 'string',
+//                                    ],
+//                                    'description' => [
+//                                        'type' => 'string',
+//                                    ],
+//                                    'content' => [
+//                                        'type' => 'string',
+//                                    ],
+//                                    'ressourceType' => [
+//                                        'type' => 'string',
+//                                        'example' => '/api/ressource_types/{id}' ,
+//                                    ],
+//                                    'user' => [
+//                                        'type' => 'string',
+//                                        'example' => '/api/users/{id}'
+//                                    ],
+//                                ]
+//                            ]
+//                        ]
+//                    ]
+//                ]
+//            ],
+//            normalizationContext: ['groups' => ['read:ressource:collection']],
+//            denormalizationContext: ['groups' => ['create:ressource:item']],
+//        )
     ],
     normalizationContext: ['groups' => ['read:ressource:collection']],
     denormalizationContext: ['groups' => ['create:ressource:item']],
@@ -101,7 +100,84 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
     normalizationContext : ['groups' => ['read:ressource:collection', 'read:ressource:item']]
 )]
 #[Patch(
-    denormalizationContext : ['groups' => ['update:ressource:item']]
+    inputFormats: ['multipart' => ['multipart/form-data']],
+    openapiContext: [
+        'summary' => 'Create Ressource',
+        'requestBody' => [
+            'content' => [
+                'multipart/form-data' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'file' => [
+                                'type' => 'string',
+                                'format' => 'binary',
+                            ],
+                            'title' => [
+                                'type' => 'string',
+                            ],
+                            'description' => [
+                                'type' => 'string',
+                            ],
+                            'content' => [
+                                'type' => 'string',
+                            ],
+                            'ressourceType' => [
+                                'type' => 'string',
+                                'example' => '/api/ressource_types/{id}' ,
+                            ],
+                            'user' => [
+                                'type' => 'string',
+                                'example' => '/api/users/{id}'
+                            ],
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    normalizationContext: ['groups' => ['read:ressource:collection']],
+    denormalizationContext: ['groups' => ['update:ressource:item']],
+)]
+#[Post(
+    inputFormats: ['multipart' => ['multipart/form-data']],
+    openapiContext: [
+        'summary' => 'Create Ressource',
+        'requestBody' => [
+            'content' => [
+                'multipart/form-data' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'file' => [
+                                'type' => 'string',
+                                'format' => 'binary',
+                            ],
+                            'title' => [
+                                'type' => 'string',
+                            ],
+                            'description' => [
+                                'type' => 'string',
+                            ],
+                            'content' => [
+                                'type' => 'string',
+                            ],
+                            'ressourceType' => [
+                                'type' => 'string',
+                                'example' => '/api/ressource_types/{id}' ,
+                            ],
+                            'user' => [
+                                'type' => 'string',
+                                'example' => '/api/users/{id}'
+                            ],
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    normalizationContext: ['groups' => ['read:ressource:collection']],
+    denormalizationContext: ['groups' => ['create:ressource:item']],
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['visible', 'accepted'])]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
@@ -159,7 +235,7 @@ class Ressource
 
     #[UploadableField(mapping: 'ressources_image', fileNameProperty: "filePath")]
     #[Groups(['create:ressource:item'])]
-    private ?File $file;
+    private ?File $file = null;
 
     public function __construct(
         #[ORM\Column]
