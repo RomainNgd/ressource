@@ -44,47 +44,6 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
             read: false,
             name: 'accept'
         ),
-//        new Post(
-//            uriTemplate: '/ressources',
-//            inputFormats: ['multipart' => ['multipart/form-data']],
-//            openapiContext: [
-//                'summary' => 'Create Ressource',
-//                'requestBody' => [
-//                    'content' => [
-//                        'multipart/form-data' => [
-//                            'schema' => [
-//                                'type' => 'object',
-//                                'properties' => [
-//                                    'file' => [
-//                                        'type' => 'string',
-//                                        'format' => 'binary',
-//                                    ],
-//                                    'title' => [
-//                                        'type' => 'string',
-//                                    ],
-//                                    'description' => [
-//                                        'type' => 'string',
-//                                    ],
-//                                    'content' => [
-//                                        'type' => 'string',
-//                                    ],
-//                                    'ressourceType' => [
-//                                        'type' => 'string',
-//                                        'example' => '/api/ressource_types/{id}' ,
-//                                    ],
-//                                    'user' => [
-//                                        'type' => 'string',
-//                                        'example' => '/api/users/{id}'
-//                                    ],
-//                                ]
-//                            ]
-//                        ]
-//                    ]
-//                ]
-//            ],
-//            normalizationContext: ['groups' => ['read:ressource:collection']],
-//            denormalizationContext: ['groups' => ['create:ressource:item']],
-//        )
     ],
     normalizationContext: ['groups' => ['read:ressource:collection']],
     denormalizationContext: ['groups' => ['create:ressource:item']],

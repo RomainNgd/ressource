@@ -3,12 +3,31 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Patch;
+use App\Controller\AcceptCommentController;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    new Patch(
+        uriTemplate: '/comment/accept/{id}',
+        controller: AcceptCommentController::class,
+        openapiContext: [
+            'summary' => 'Accept a comment by a moderator',
+            'requestBody' => [
+                'content' => [
+                    'application/merge-patch+json' => []
+                ]
+            ]
+        ],
+        description: 'Accept a ressource by a moderator (must have role moderator)',
+        normalizationContext: ['groups' => ['ressource:accept']],
+        read: false,
+        name: 'accept'
+    ),
+)]
 class Comment
 {
     #[ORM\Id]
