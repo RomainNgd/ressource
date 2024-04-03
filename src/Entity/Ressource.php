@@ -89,6 +89,14 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
                                 'type' => 'string',
                                 'example' => '/api/users/{id}'
                             ],
+                            'relationType' => [
+                                'type' => 'string',
+                                'example' => '/api/relation_types/{id}'
+                            ],
+                            'ressourceCategory' => [
+                                'type' => 'string',
+                                'example' => '/api/ressource_categories/{id}'
+                            ],
                         ]
                     ]
                 ]
@@ -128,6 +136,14 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
                             'user' => [
                                 'type' => 'string',
                                 'example' => '/api/users/{id}'
+                            ],
+                            'relationType' => [
+                                'type' => 'string',
+                                'example' => '/api/relation_types/{id}'
+                            ],
+                            'ressourceCategory' => [
+                                'type' => 'string',
+                                'example' => '/api/ressource_categories/{id}'
                             ],
                         ]
                     ]
@@ -195,6 +211,16 @@ class Ressource
     #[UploadableField(mapping: 'ressources_image', fileNameProperty: "filePath")]
     #[Groups(['create:ressource:item'])]
     private ?File $file = null;
+
+    #[ORM\ManyToOne(inversedBy: 'Ressources')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["read:ressource:collection",'update:ressource:item', 'create:ressource:item'])]
+    private RessourceCategory $ressourceCategory;
+
+    #[ORM\ManyToOne(inversedBy: 'Ressources')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["read:ressource:collection",'update:ressource:item', 'create:ressource:item'])]
+    private RelationType $relationType;
 
     public function __construct(
         #[ORM\Column]
@@ -427,5 +453,29 @@ class Ressource
     public function setFileUrl(?string $fileUrl): void
     {
         $this->fileUrl = $fileUrl;
+    }
+
+    public function getRessourceCategory(): RessourceCategory
+    {
+        return $this->ressourceCategory;
+    }
+
+    public function setRessourceCategory(RessourceCategory $ressourceCategory): static
+    {
+        $this->ressourceCategory = $ressourceCategory;
+
+        return $this;
+    }
+
+    public function getRelationType(): RelationType
+    {
+        return $this->relationType;
+    }
+
+    public function setRelationType(RelationType $relationType): static
+    {
+        $this->relationType = $relationType;
+
+        return $this;
     }
 }
