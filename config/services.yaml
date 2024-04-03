@@ -29,9 +29,3 @@ services:
     App\OpenApi\JwtDecorator:
         decorates: 'api_platform.openapi.factory'
         arguments: [ '@.inner' ]
-
-    App\EventListener\DeserializerListener:
-        tags:
-            - {name: 'kernel.event_listener', event: 'kernel.request', method: 'onKernelRequest', priority: 2}
-        decorates: 'api_platform.listener.request.deserialize'
-        autoconfigure: false

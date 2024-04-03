@@ -3,23 +3,20 @@
 namespace App\Serializer;
 
 use App\Entity\Ressource;
-use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
-use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Flex\Response;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
-class RessourceNormalizer implements NormalizerInterface, NormalizerAwareInterface
+class RessourceNormalizer implements NormalizerInterface
 {
-    use NormalizerAwareTrait;
 
-    private const ALREADY_CALLED = 'AppRessourceNormalizerAlreadyCalled';
-
+    private const ALREADY_CALLED = 'MEDIA_OBJECT_NORMALIZER_ALREADY_CALLED';
 
     public function __construct(
-        private readonly StorageInterface $storage,
-    )
-    {
+        #[Autowire(service: 'serializer.normalizer.object')]
+        private readonly NormalizerInterface $normalizer,
+        private readonly StorageInterface $storage
+    ) {
     }
 
     /**
@@ -27,18 +24,28 @@ class RessourceNormalizer implements NormalizerInterface, NormalizerAwareInterfa
      */
     public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
-        $object->setFileUrl($this->storage->resolveUri($object, 'file'));
         $context[self::ALREADY_CALLED] = true;
+
+        if ($object->getFile()){
+            $object->setFileUrl( $this->storage->resolveUri($object, 'file'));
+        }
+
         return $this->normalizer->normalize($object, $format, $context);
     }
 
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return !isset($context[self::ALREADY_CALLED]) && $data instanceof Ressource;
+        if (isset($context[self::ALREADY_CALLED])) {
+            return false;
+        }
+
+        return $data instanceof Ressource;
     }
 
     public function getSupportedTypes(?string $format): array
     {
-        return [];
+        return [
+            Ressource::class => true,
+        ];
     }
 }

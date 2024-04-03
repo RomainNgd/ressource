@@ -5,10 +5,10 @@ namespace App\Serializer;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
-class FileDenormalizer implements DenormalizerInterface
+final class FileDenormalizer implements DenormalizerInterface
 {
 
-    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): File
     {
         return $data;
     }
@@ -20,6 +20,10 @@ class FileDenormalizer implements DenormalizerInterface
 
     public function getSupportedTypes(?string $format): array
     {
-        return [];
+        return [
+            'object'=> null,
+            '*' => false,
+            File::class => true,
+        ];
     }
 }
