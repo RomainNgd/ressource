@@ -6,6 +6,7 @@ use ApiPlatform\Doctrine\Odm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
@@ -13,7 +14,6 @@ use ApiPlatform\Metadata\Post;
 use App\Controller\AcceptRessourceController;
 use App\Controller\EmptyController;
 use App\Repository\RessourceRepository;
-use App\State\RessourceValidator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -45,11 +45,53 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
             read: false,
             name: 'accept'
         ),
+        new Post(
+            uriTemplate: '/ressources',
+            inputFormats: ['multipart' => ['multipart/form-data']],
+            openapiContext: [
+                'summary' => 'Create Ressource',
+                'requestBody' => [
+                    'content' => [
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'file' => [
+                                        'type' => 'string',
+                                        'format' => 'binary',
+                                    ],
+                                    'title' => [
+                                        'type' => 'string',
+                                    ],
+                                    'description' => [
+                                        'type' => 'string',
+                                    ],
+                                    'content' => [
+                                        'type' => 'string',
+                                    ],
+                                    'ressourceType' => [
+                                        'type' => 'string',
+                                        'example' => '/api/ressource_types/{id}' ,
+                                    ],
+                                    'user' => [
+                                        'type' => 'string',
+                                        'example' => '/api/users/{id}'
+                                    ],
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            normalizationContext: ['groups' => ['read:ressource:collection']],
+            denormalizationContext: ['groups' => ['create:ressource:item']],
+        )
     ],
+    normalizationContext: ['groups' => ['read:ressource:collection']],
+    denormalizationContext: ['groups' => ['create:ressource:item']],
     paginationClientEnabled: true,
     paginationClientItemsPerPage: 30,
     paginationItemsPerPage: 30,
-    paginationMaximumItemsPerPage: 50
 
 )]
 #[GetCollection(
@@ -60,30 +102,6 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
 )]
 #[Patch(
     denormalizationContext : ['groups' => ['update:ressource:item']]
-)]
-#[Post(
-    controller: EmptyController::class,
-    openapiContext: [
-        'summary' => 'Create Ressource',
-        'requestBody' => [
-            'content' => [
-                'multipart/form-data' => [
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'file' => [
-                                'type' => 'string',
-                                'format' => 'binary',
-                            ],
-                        ]
-                    ]
-                ]
-            ]
-        ]
-    ],
-    denormalizationContext: ['groups' => ['create:ressource:item']],
-    processor: RessourceValidator::class,
-
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['visible', 'accepted'])]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
@@ -114,7 +132,7 @@ class Ressource
     private ?RessourceType $ressourceType = null;
 
     #[ORM\Column]
-    #[Groups(['update:ressource:item', 'create:ressource:item'])]
+    #[Groups(['update:ressource:item', 'create:ressource:item', 'read:ressource:collection'])]
     private bool $visible = false;
 
     #[ORM\Column]
@@ -134,10 +152,10 @@ class Ressource
     private Collection $shares;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["read:ressource:collection", 'update:ressource:item'])]
     private ?string $filePath = null;
 
-    private ?string $fileUrl = null;
+    #[Groups(["read:ressource:collection"])]
+    public ?string $fileUrl = null;
 
     #[UploadableField(mapping: 'ressources_image', fileNameProperty: "filePath")]
     #[Groups(['create:ressource:item'])]
