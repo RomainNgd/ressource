@@ -39,8 +39,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
         ]
     ],
     description: 'Create Account',
-    normalizationContext: ['groups' => ['user:create']],
-    denormalizationContext: ['groups' => ['read:user:item']],
+    normalizationContext: ['groups' => ['read:user:collection']],
+    denormalizationContext: ['groups' => ['user:create']],
     validationContext: ['groups' => ['user:create']],
     read: false,
     name: 'Create Account',
