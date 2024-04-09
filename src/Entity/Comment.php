@@ -3,12 +3,16 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Controller\AcceptCommentController;
+use App\Controller\CommentCreateController;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 #[ApiResource(
@@ -28,9 +32,39 @@ use Symfony\Component\Serializer\Attribute\Groups;
             normalizationContext: ['groups' => ['comment:accept']],
             name: 'comment accept'
         ),
-    ]
+    ],
+    normalizationContext: ['read:comment:collection','read:comment:item'],
+    denormalizationContext: ["create:comment:item"]
 )]
-#[GetCollection]
+#[GetCollection(denormalizationContext: ['read:comment:collection'])]
+#[Get(normalizationContext: ['read:comment:collection','read:comment:item'])]
+#[Post(
+    controller: CommentCreateController::class,
+    openapiContext: [
+        'summary' => 'Create Ressource',
+        'requestBody' => [
+            'content' => [
+                'json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'ressourceType' => [
+                                'type' => 'string',
+                                'example' => '/api/ressource_types/{id}' ,
+                            ],
+                            'content' => [
+                                'type' => 'string',
+                                'example' => 'Lorem ipsum dolor set amet',
+                            ],
+                        ],
+                    ]
+                ]
+            ]
+        ]
+    ],
+    normalizationContext: [ 'read:comment:collection','read:comment:item'],
+    denormalizationContext: ["create:comment:item"]
+)]
 class Comment
 {
     #[ORM\Id]
@@ -39,19 +73,22 @@ class Comment
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["read:ressource:item"])]
+    #[Groups(["read:ressource:item", 'create:comment:item'])]
+    #[Assert\NotBlank(message: 'Le contenue est obligatoire')]
+    #[Assert\Length(min: 1, max: 255, minMessage: 'Le contenue doit faire au minimum {{ limit }} caractère', maxMessage: 'Le titre doit faire au maximum {{ limit }} caractère')]
     private ?string $content = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Ressource $ressource = null;
+    #[Groups(['create:comment:item'])]
+    private Ressource $ressource;
 
     #[ORM\Column]
     #[Groups(["comment:accept"])]
-    private ?bool $accepted = null;
+    private bool $accepted = false;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
-    #[Groups(["read:ressource:item"])]
+    #[Groups(["read:ressource:item", 'read:comment:collection'])]
     private ?User $user = null;
 
     #[ORM\Column(nullable: true)]
@@ -59,7 +96,7 @@ class Comment
 
     public function __construct(
         #[ORM\Column]
-        #[Groups(["read:ressource:item"])]
+        #[Groups(["read:ressource:item", 'read:comment:item'])]
         private \DateTime $createdAt = new \DateTime()
     )
     {
@@ -94,19 +131,19 @@ class Comment
         return $this;
     }
 
-    public function getRessource(): ?Ressource
+    public function getRessource(): Ressource
     {
         return $this->ressource;
     }
 
-    public function setRessource(?Ressource $ressource): static
+    public function setRessource(Ressource $ressource): static
     {
         $this->ressource = $ressource;
 
         return $this;
     }
 
-    public function isAccepted(): ?bool
+    public function isAccepted(): bool
     {
         return $this->accepted;
     }
