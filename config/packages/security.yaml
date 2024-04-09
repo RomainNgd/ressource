@@ -45,9 +45,20 @@ security:
     access_control:
         - { path: ^/api/docs, roles: PUBLIC_ACCESS } # Allows accessing API documentations and Swagger UI docs
         - { path: ^/auth, roles: PUBLIC_ACCESS }
-        - { path: ^/api/ressources, roles: PUBLIC_ACCESS}
+        - { path: ^/api/ressources, methods: GET, roles: PUBLIC_ACCESS}
         - { path: ^/api/createAccount, roles: PUBLIC_ACCESS}
+        - { path: ^/api/ressource_types,  methods: [ GET ], roles: PUBLIC_ACCESS }
+        - { path: ^/api/ressource_categories,  methods: [ GET ], roles: PUBLIC_ACCESS }
+        - { path: ^/api/relation_types,  methods: [ GET ], roles: PUBLIC_ACCESS }
+        - { path: ^/api/ressources, methods: [POST, PATCH],  roles: ROLE_USER}
         - { path: ^/api/ressources/accept, roles: ROLE_MODERATOR}
+        - { path: ^/api/comments/accept, roles: ROLE_MODERATOR}
+        - { path: ^/api/ressource_types/accept, roles: ROLE_MODERATOR}
+        - { path: ^/api/comments/accept, roles: ROLE_MODERATOR}
+        - { path: ^/api/ressource_types,  methods: [POST, PATCH], roles: ROLE_MODERATOR}
+        - { path: ^/api/ressource_categories,  methods: [POST, PATCH], roles: ROLE_MODERATOR}
+        - { path: ^/api/relation_types,  methods: [POST, PATCH], roles: ROLE_MODERATOR}
+        - { path: ^/api/users, roles: ROLE_USER }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 when@test:
     security:

@@ -5,8 +5,9 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
+use App\Controller\SlugController;
 use App\Repository\RessourceTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -24,12 +25,50 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[Get(
     normalizationContext : ['groups' => ['read:ressourceType:collection']]
 )]
-//#[Put(
-//    denormalizationContext : ['groups' => ['update:ressourceType:item']]
-//)]
-//#[Post(
-//    denormalizationContext : ['groups' => ['create:ressourceType:item']]
-//)]
+#[Post(
+    controller: SlugController::class,
+    openapiContext: [
+        'summary' => 'Create Ressource Type',
+        'requestBody' => [
+            'content' => [
+                'application/json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'title' => [
+                                'type' => 'string',
+                                'example' => 'title' ,
+                            ],
+                        ],
+                    ]
+                ]
+            ]
+        ]
+    ],
+    denormalizationContext: ["create:ressourceType"]
+)]
+#[Patch(
+    controller: SlugController::class,
+    openapiContext: [
+        'summary' => 'Update ressource Type',
+        'requestBody' => [
+            'content' => [
+                'application/json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'title' => [
+                                'type' => 'string',
+                                'example' => 'title' ,
+                            ],
+                        ],
+                    ]
+                ]
+            ]
+        ]
+    ],
+    denormalizationContext: ["update:ressourceType"],
+)]
 class RessourceType
 {
     #[ORM\Id]
@@ -42,7 +81,7 @@ class RessourceType
     private string $slug = '';
 
     #[ORM\Column(length: 255)]
-    #[Groups(["read:ressource:collection", "read:ressourceType:collection", "update:ressourceType:item", "create:ressourceType:item"])]
+    #[Groups(["read:ressource:collection", "read:ressourceType:collection", "update:ressourceType", "create:ressourceType"])]
     private ?string $title = null;
 
     #[ORM\OneToMany(targetEntity: Ressource::class, mappedBy: 'ressourceType')]

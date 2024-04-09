@@ -5,6 +5,9 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use App\Controller\SlugController;
 use App\Repository\RelationTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,8 +15,54 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: RelationTypeRepository::class)]
-#[Get]
-#[GetCollection]
+#[Get(    normalizationContext: ['read:relationType:collection'],)]
+#[GetCollection(    normalizationContext: ['read:relationType:collection'],)]
+#[Post(
+    controller: SlugController::class,
+    openapiContext: [
+        'summary' => 'Create relation Type',
+        'requestBody' => [
+            'content' => [
+                'application/json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'title' => [
+                                'type' => 'string',
+                                'example' => 'title' ,
+                            ],
+                        ],
+                    ]
+                ]
+            ]
+        ]
+    ],
+    normalizationContext: ['read:relationType:collection'],
+    denormalizationContext: ["create:relationType"],
+)]
+#[Patch(
+    controller: SlugController::class,
+    openapiContext: [
+        'summary' => 'Update relationType',
+        'requestBody' => [
+            'content' => [
+                'application/json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'title' => [
+                                'type' => 'string',
+                                'example' => 'title' ,
+                            ],
+                        ],
+                    ]
+                ]
+            ]
+        ]
+    ],
+    normalizationContext: ['read:relationType:collection'],
+    denormalizationContext: ["update:relationType"],
+)]
 class RelationType
 {
     #[ORM\Id]
@@ -22,7 +71,7 @@ class RelationType
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('read:ressource:collection')]
+    #[Groups(['read:ressource:collection', 'read:relationType:collection', 'create:relationType', 'update:relationType'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
