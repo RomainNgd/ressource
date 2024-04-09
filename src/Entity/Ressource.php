@@ -11,12 +11,12 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\AcceptRessourceController;
+use App\Controller\RessourceController;
 use App\Repository\RessourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -60,6 +60,7 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
 )]
 #[Patch(
     inputFormats: ['multipart' => ['multipart/form-data']],
+    controller: RessourceController::class,
     openapiContext: [
         'summary' => 'Create Ressource',
         'requestBody' => [
@@ -85,10 +86,6 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
                                 'type' => 'string',
                                 'example' => '/api/ressource_types/{id}' ,
                             ],
-                            'user' => [
-                                'type' => 'string',
-                                'example' => '/api/users/{id}'
-                            ],
                             'relationType' => [
                                 'type' => 'string',
                                 'example' => '/api/relation_types/{id}'
@@ -96,6 +93,10 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
                             'ressourceCategory' => [
                                 'type' => 'string',
                                 'example' => '/api/ressource_categories/{id}'
+                            ],
+                            'visible' => [
+                                'type' => 'bool',
+                                'format' => 'bool',
                             ],
                         ]
                     ]
@@ -108,6 +109,7 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
 )]
 #[Post(
     inputFormats: ['multipart' => ['multipart/form-data']],
+    controller: RessourceController::class,
     openapiContext: [
         'summary' => 'Create Ressource',
         'requestBody' => [
@@ -133,9 +135,9 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
                                 'type' => 'string',
                                 'example' => '/api/ressource_types/{id}' ,
                             ],
-                            'user' => [
-                                'type' => 'string',
-                                'example' => '/api/users/{id}'
+                            'visible' => [
+                                'type' => 'bool',
+                                'format' => 'bool',
                             ],
                             'relationType' => [
                                 'type' => 'string',
@@ -156,6 +158,7 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
 )]
 #[ApiFilter(BooleanFilter::class, properties: ['visible', 'accepted'])]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
+#[ApiFilter(SearchFilter::class, properties: ['ressourceType.title' => 'partial'])]
 #[ApiFilter(OrderFilter::class, properties: ['updatedAt'], arguments: ['orderParameterName'=>'order'])]
 class Ressource
 {
@@ -185,7 +188,7 @@ class Ressource
 
     #[ORM\Column]
     #[Groups(['update:ressource:item', 'create:ressource:item', 'read:ressource:collection'])]
-    private bool $visible = false;
+    private bool $visible;
 
     #[ORM\Column]
     #[Groups(['update:ressource:item', 'ressource:accept'])]
@@ -193,7 +196,7 @@ class Ressource
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["read:ressource:collection", 'create:ressource:item'])]
+    #[Groups(["read:ressource:collection"])]
     private ?User $user = null;
 
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'ressource')]

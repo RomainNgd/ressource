@@ -2,6 +2,7 @@
 
 namespace App\Serializer;
 
+use App\Entity\Comment;
 use App\Entity\Ressource;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
