@@ -44,13 +44,13 @@ use Symfony\Component\Validator\Constraints as Assert;
         'summary' => 'Create Ressource',
         'requestBody' => [
             'content' => [
-                'json' => [
+                'application/json' => [
                     'schema' => [
                         'type' => 'object',
                         'properties' => [
-                            'ressourceType' => [
+                            'ressource' => [
                                 'type' => 'string',
-                                'example' => '/api/ressource_types/{id}' ,
+                                'example' => '/api/ressources/{id}' ,
                             ],
                             'content' => [
                                 'type' => 'string',
