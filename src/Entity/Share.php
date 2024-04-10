@@ -59,8 +59,14 @@ use Doctrine\ORM\Mapping as ORM;
     input: ShareDto::class,
     processor: ShareProcessor::class,
 )]
-#[Get]
-#[GetCollection]
+#[Get(
+    output: false,
+    read: false
+)]
+#[GetCollection(
+    output: false,
+    read: false
+)]
 class Share
 {
     #[ORM\Id]

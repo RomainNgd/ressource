@@ -12,7 +12,11 @@ class AcceptCommentController extends AbstractController
 
     public function __invoke(Comment $comment): Comment
     {
-        $comment->setAccepted(true);
+        if ($comment->isAccepted()){
+            $comment->setAccepted(false);
+        } else {
+            $comment->setAccepted(true);
+        }
 
         return $comment;
     }

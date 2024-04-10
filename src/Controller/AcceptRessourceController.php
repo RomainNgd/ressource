@@ -11,8 +11,11 @@ class AcceptRessourceController extends AbstractController
 
     public function __invoke(Ressource $ressource): Ressource
     {
-        $ressource->setAccepted(true);
-
+        if ($ressource->isAccepted()){
+            $ressource->setAccepted(false);
+        } else {
+            $ressource->setAccepted(true);
+        }
         return $ressource;
     }
 

@@ -95,8 +95,7 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
                                 'example' => '/api/ressource_categories/{id}'
                             ],
                             'visible' => [
-                                'type' => 'bool',
-                                'format' => 'bool',
+                                'type' => 'boolean',
                             ],
                         ]
                     ]
@@ -136,8 +135,7 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
                                 'example' => '/api/ressource_types/{id}' ,
                             ],
                             'visible' => [
-                                'type' => 'bool',
-                                'format' => 'bool',
+                                'type' => 'boolean',
                             ],
                             'relationType' => [
                                 'type' => 'string',
@@ -169,13 +167,13 @@ class Ressource
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["read:ressource:collection", 'update:ressource:item','create:ressource:item'])]
+    #[Groups(["read:ressource:collection", 'update:ressource:item','create:ressource:item', 'read:favorite:collection'])]
     #[Assert\NotBlank(message: 'Le titre est obligatoire')]
     #[Assert\Length(min: 1, max: 255, minMessage: 'Le titre doit faire au minimum {{ limit }} caractère', maxMessage: 'Le titre doit faire au maximum {{ limit }} caractère')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["read:ressource:collection",'update:ressource:item', 'create:ressource:item'])]
+    #[Groups(["read:ressource:collection",'update:ressource:item', 'create:ressource:item', 'read:favorite:collection'])]
     private string $description = '';
 
     #[ORM\Column(type: Types::TEXT)]
@@ -209,7 +207,7 @@ class Ressource
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $filePath = null;
 
-    #[Groups(["read:ressource:collection"])]
+    #[Groups(["read:ressource:collection", 'read:favorite:collection'])]
     public ?string $fileUrl = null;
 
     #[UploadableField(mapping: 'ressources_image', fileNameProperty: "filePath")]
@@ -226,6 +224,9 @@ class Ressource
     #[Groups(["read:ressource:collection",'update:ressource:item', 'create:ressource:item'])]
     private RelationType $relationType;
 
+    #[ORM\OneToMany(targetEntity: Favorite::class, mappedBy: 'Ressource')]
+    private Collection $favorites;
+
     public function __construct(
         #[ORM\Column]
         private \DateTime $createdAt = new \DateTime(),
@@ -236,6 +237,7 @@ class Ressource
     {
         $this->comments = new ArrayCollection();
         $this->shares = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -479,6 +481,36 @@ class Ressource
     public function setRelationType(RelationType $relationType): static
     {
         $this->relationType = $relationType;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Favorite>
+     */
+    public function getFavorites(): Collection
+    {
+        return $this->favorites;
+    }
+
+    public function addFavorite(Favorite $favorite): static
+    {
+        if (!$this->favorites->contains($favorite)) {
+            $this->favorites->add($favorite);
+            $favorite->setRessource($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavorite(Favorite $favorite): static
+    {
+        if ($this->favorites->removeElement($favorite)) {
+            // set the owning side to null (unless already changed)
+            if ($favorite->getRessource() === $this) {
+                $favorite->setRessource(null);
+            }
+        }
 
         return $this;
     }

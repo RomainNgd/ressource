@@ -22,13 +22,13 @@ class FavoriteController extends AbstractController
          $already = $this->favoriteRepository->createQueryBuilder('f')
              ->where('f.user = :user')
              ->andWhere('f.ressource = :ressource')
-             ->setParameter('user', $favorite->getUser())
+             ->setParameter('user', $this->authService->getCurrentUser())
              ->setParameter('ressource', $favorite->getRessource())
              ->getQuery()->getResult();
-         if ($already){
+         // TODO : a gérer ->
+         if ($already instanceof Favorite){
              throw new \Exception('La resource est déjà en favori');
          }
-         if ($this->favoriteRepository->findBy(['']))
          $favorite->setUser($this->authService->getCurrentUser());
          return $favorite;
      }
