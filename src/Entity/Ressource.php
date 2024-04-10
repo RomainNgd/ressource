@@ -186,7 +186,7 @@ class Ressource
 
     #[ORM\Column]
     #[Groups(['update:ressource:item', 'create:ressource:item', 'read:ressource:collection'])]
-    private bool $visible;
+    private bool $visible = false;
 
     #[ORM\Column]
     #[Groups(['update:ressource:item', 'ressource:accept'])]
