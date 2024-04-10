@@ -21,7 +21,7 @@ class AuthService
     {
         $identifier = $this->security->getUser()->getUserIdentifier();
         $user = $this->getUserOrNull($identifier);
-        if (!$user){
+        if (!$user instanceof User){
             throw new UserNotFoundException();
         } else {
             return $user;
@@ -31,7 +31,7 @@ class AuthService
     public function getUser(string $identifier): User
     {
         $user = $this->getUserOrNull($identifier);
-        if (!$user){
+        if (!$user instanceof User){
             throw new UserNotFoundException();
         } else {
             return $user;
