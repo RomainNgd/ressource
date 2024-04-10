@@ -25,6 +25,7 @@ class RessourceController extends AbstractController
         $ressource->setAccepted(false);
         $ressource->setUpdateAt(new \DateTime());
 
+        var_dump($ressource->getTitle());
         return $ressource;
     }
 

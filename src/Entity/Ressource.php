@@ -10,8 +10,12 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Controller\AcceptRessourceController;
 use App\Controller\RessourceController;
+use App\Controller\UpdateRessourceController;
+use App\dto\UpdateRessourceDto;
+use App\Processor\UpdateRessourceProcessor;
 use App\Repository\RessourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -44,6 +48,54 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
             read: false,
             name: 'accept ressource'
         ),
+        new Post(
+            uriTemplate: "/ressources/update",
+            inputFormats: ['multipart' => ['multipart/form-data']],
+            controller: UpdateRessourceController::class,
+            openapiContext: [
+                'summary' => 'Update Ressource',
+                'requestBody' => [
+                    'content' => [
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'file' => [
+                                        'type' => 'string',
+                                        'format' => 'binary',
+                                    ],
+                                    'title' => [
+                                        'type' => 'string',
+                                    ],
+                                    'description' => [
+                                        'type' => 'string',
+                                    ],
+                                    'content' => [
+                                        'type' => 'string',
+                                    ],
+                                    'ressourceType' => [
+                                        'type' => 'string',
+                                        'example' => '/api/ressource_types/{id}' ,
+                                    ],
+                                    'relationType' => [
+                                        'type' => 'string',
+                                        'example' => '/api/relation_types/{id}'
+                                    ],
+                                    'ressourceCategory' => [
+                                        'type' => 'string',
+                                        'example' => '/api/ressource_categories/{id}'
+                                    ],
+                                    'visible' => [
+                                        'type' => 'boolean',
+                                    ],
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+        )
+
     ],
     normalizationContext: ['groups' => ['read:ressource:collection']],
     denormalizationContext: ['groups' => ['create:ressource:item']],
@@ -57,54 +109,6 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
 )]
 #[Get(
     normalizationContext : ['groups' => ['read:ressource:collection', 'read:ressource:item']]
-)]
-#[Patch(
-    inputFormats: ['multipart' => ['multipart/form-data']],
-    controller: RessourceController::class,
-    openapiContext: [
-        'summary' => 'Create Ressource',
-        'requestBody' => [
-            'content' => [
-                'multipart/form-data' => [
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'file' => [
-                                'type' => 'string',
-                                'format' => 'binary',
-                            ],
-                            'title' => [
-                                'type' => 'string',
-                            ],
-                            'description' => [
-                                'type' => 'string',
-                            ],
-                            'content' => [
-                                'type' => 'string',
-                            ],
-                            'ressourceType' => [
-                                'type' => 'string',
-                                'example' => '/api/ressource_types/{id}' ,
-                            ],
-                            'relationType' => [
-                                'type' => 'string',
-                                'example' => '/api/relation_types/{id}'
-                            ],
-                            'ressourceCategory' => [
-                                'type' => 'string',
-                                'example' => '/api/ressource_categories/{id}'
-                            ],
-                            'visible' => [
-                                'type' => 'boolean',
-                            ],
-                        ]
-                    ]
-                ]
-            ]
-        ]
-    ],
-    normalizationContext: ['groups' => ['read:ressource:collection']],
-    denormalizationContext: ['groups' => ['update:ressource:item']],
 )]
 #[Post(
     inputFormats: ['multipart' => ['multipart/form-data']],
@@ -163,7 +167,7 @@ class Ressource
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["read:ressource:collection"])]
+    #[Groups(["read:ressource:collection", 'update:ressource:item'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -211,7 +215,7 @@ class Ressource
     public ?string $fileUrl = null;
 
     #[UploadableField(mapping: 'ressources_image', fileNameProperty: "filePath")]
-    #[Groups(['create:ressource:item'])]
+    #[Groups(['create:ressource:item','update:ressource:item'])]
     private ?File $file = null;
 
     #[ORM\ManyToOne(inversedBy: 'Ressources')]
@@ -243,6 +247,11 @@ class Ressource
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     public function getTitle(): ?string
