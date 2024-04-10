@@ -108,7 +108,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Share::class, mappedBy: 'sender')]
     private Collection $shares;
 
-    #[ORM\OneToMany(targetEntity: Favorite::class, mappedBy: 'User')]
+    #[ORM\OneToMany(targetEntity: Favorite::class, mappedBy: 'user')]
     private Collection $favorites;
 
     public function __construct()
