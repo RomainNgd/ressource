@@ -3,11 +3,64 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use App\Controller\AcceptRessourceController;
+use App\Controller\ShareByMeController;
+use App\Controller\ShareToMeController;
+use App\dto\ShareDto;
+use App\Processor\ShareProcessor;
 use App\Repository\ShareRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ShareRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/shares/to-me',
+            controller: ShareToMeController::class,
+            description: 'Get User personnal share top him',
+            read: true,
+
+        ),
+        new GetCollection(
+            uriTemplate: '/shares/by-me',
+            controller: ShareByMeController::class,
+            description: 'Get User personnal share by him',
+            read: true,
+        ),
+    ],
+)]
+#[Post(
+    openapiContext: [
+        'summary' => 'Create Share',
+        'requestBody' => [
+            'content' => [
+                'application/json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'ressource' => [
+                                'type' => 'string',
+                                'example' => '/api/ressources/{id}' ,
+                            ],
+                            'email' => [
+                                'type' => 'string',
+                                'example' => 'test@test.fr',
+                            ],
+                        ],
+                    ]
+                ]
+            ]
+        ]
+    ],
+    input: ShareDto::class,
+    processor: ShareProcessor::class,
+)]
+#[Get]
+#[GetCollection]
 class Share
 {
     #[ORM\Id]
@@ -17,14 +70,14 @@ class Share
 
     #[ORM\ManyToOne(inversedBy: 'shares')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $sender = null;
+    private User $sender;
 
     #[ORM\ManyToOne(inversedBy: 'shares')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $recipient = null;
+    private User $recipient;
 
     #[ORM\ManyToOne(inversedBy: 'shares')]
-    private ?Ressource $ressource = null;
+    private Ressource $ressource;
 
 
     public function __construct(
@@ -39,6 +92,11 @@ class Share
         return $this->id;
     }
 
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
     public function getSharedAt(): \DateTime
     {
         return $this->sharedAt;
@@ -51,36 +109,36 @@ class Share
         return $this;
     }
 
-    public function getSender(): ?User
+    public function getSender(): User
     {
         return $this->sender;
     }
 
-    public function setSender(?User $sender): static
+    public function setSender(User $sender): static
     {
         $this->sender = $sender;
 
         return $this;
     }
 
-    public function getRecipient(): ?User
+    public function getRecipient(): User
     {
         return $this->recipient;
     }
 
-    public function setRecipient(?User $recipient): static
+    public function setRecipient(User $recipient): static
     {
         $this->recipient = $recipient;
 
         return $this;
     }
 
-    public function getRessource(): ?Ressource
+    public function getRessource(): Ressource
     {
         return $this->ressource;
     }
 
-    public function setRessource(?Ressource $ressource): static
+    public function setRessource(Ressource $ressource): static
     {
         $this->ressource = $ressource;
 
