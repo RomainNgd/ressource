@@ -24,7 +24,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
                 'summary' => 'Retrive user favorite ressource',
             ],
             description: 'Retrive user favorite ressource',
-            normalizationContext: ['groups' => ['read:favorite:collection']],
+            normalizationContext: ['groups' => ['read:favorite:collection', 'read:ressource:collection']],
             read: false,
         ),
     ],
