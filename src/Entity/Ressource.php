@@ -28,19 +28,11 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
 #[Uploadable]
 #[ApiResource(
     operations: [
-        new Patch(
+        new Post(
             uriTemplate: '/ressources/accept/{id}',
             controller: AcceptRessourceController::class,
-            openapiContext: [
-                'summary' => 'Accept a ressource by a moderator',
-                'requestBody' => [
-                    'content' => [
-                        'application/merge-patch+json' => []
-                    ]
-]
-            ],
             description: 'Accept a ressource by a moderator (must have role moderator)',
-            normalizationContext: ['groups' => ['ressource:accept']],
+            normalizationContext: ['groups' => ['read:ressource:collection']],
             read: false,
             name: 'accept ressource'
         ),
@@ -189,7 +181,7 @@ class Ressource
     private bool $visible = false;
 
     #[ORM\Column]
-    #[Groups(['update:ressource:item', 'ressource:accept'])]
+    #[Groups(['update:ressource:item', 'ressource:accept', 'read:ressource:collection'])]
     private bool $accepted = false;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
