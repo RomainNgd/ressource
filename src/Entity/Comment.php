@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -65,6 +67,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: [ 'read:comment:collection','read:comment:item'],
     denormalizationContext: ["create:comment:item"]
 )]
+#[ApiFilter(BooleanFilter::class, properties: ['accepted'])]
 class Comment
 {
     #[ORM\Id]
