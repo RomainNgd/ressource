@@ -27,7 +27,7 @@ class RessourceNormalizer implements NormalizerInterface
     {
         $context[self::ALREADY_CALLED] = true;
 
-        if ($object->getFile()){
+        if ($object->getFilePath()){
             $object->setFileUrl( $this->storage->resolveUri($object, 'file'));
         }
 
