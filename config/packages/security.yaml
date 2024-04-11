@@ -40,7 +40,7 @@ security:
     role_hierarchy:
         ROLE_USER: []
         ROLE_MODERATOR: [ROLE_USER]
-        ROLE_ADMIN: [ROLE_MODO]
+        ROLE_ADMIN: [ROLE_MODERATOR]
 
     access_control:
         - { path: ^/api/docs, roles: PUBLIC_ACCESS } # Allows accessing API documentations and Swagger UI docs

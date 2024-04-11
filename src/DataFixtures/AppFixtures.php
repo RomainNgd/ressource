@@ -41,7 +41,7 @@ class AppFixtures extends Fixture
 
         $modo = new User();
         $modo->setEmail("modo@api.com");
-        $modo->setRoles(["ROLE_MODO"]);
+        $modo->setRoles(["ROLE_MODERATOR"]);
         $modo->setPassword($this->userPasswordHasher->hashPassword($userAdmin, "password"));
         $manager->persist($modo);
 
