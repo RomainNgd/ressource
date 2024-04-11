@@ -84,6 +84,9 @@ class AppFixtures extends Fixture
             $ressource->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum condimentum co');
             $ressource->setRessourceType($listTypes[array_rand($listTypes)]);
             $ressource->setUser($userAdmin);
+            $ressource->setVisible(rand(true, false));
+            $ressource->setAccepted(rand(true, false));
+            $ressource->setFilePath('6617b51270d06_Apps-Colissimo-360x236.jpg');
             $ressource->setRessourceCategory($ressourceCategories[array_rand($ressourceCategories)]);
             $ressource->setRelationType($relationsTypes[array_rand($relationsTypes)]);
             $manager->persist($ressource);
