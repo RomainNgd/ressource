@@ -155,7 +155,7 @@ class Ressource
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["read:ressource:collection"])]
+    #[Groups(["read:ressource:collection", 'read:favorite:collection'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]

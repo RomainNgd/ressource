@@ -22,7 +22,7 @@ class MyFavoriteController extends AbstractController
         $favorites = $this->favoriteRepository->findBy(['user' => $this->authService->getCurrentUser()]);
         foreach ($favorites as $favorite) {
 
-            $ressources[] =[ $favorite, $favorite->getRessource()];
+            $ressources[] =[$favorite];
         }
         return $ressources;
     }

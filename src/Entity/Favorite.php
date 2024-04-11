@@ -57,6 +57,7 @@ class Favorite
 
     public function __construct(
         #[ORM\Column]
+        #[Groups(['read:favorite:collection'])]
         private ?\DateTimeImmutable $createdAt = new \DateTimeImmutable()
     )
     {
