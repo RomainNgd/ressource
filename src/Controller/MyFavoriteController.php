@@ -24,6 +24,6 @@ class MyFavoriteController extends AbstractController
 
             $ressources[] =[$favorite];
         }
-        return $ressources;
+        return $favorites;
     }
 }
