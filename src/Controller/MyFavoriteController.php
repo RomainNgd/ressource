@@ -18,6 +18,12 @@ class MyFavoriteController extends AbstractController
 
     public function __invoke(): array
     {
-        return $this->favoriteRepository->findBy(['user' => $this->authService->getCurrentUser()]);
+        $ressources = [];
+        $favorites = $this->favoriteRepository->findBy(['user' => $this->authService->getCurrentUser()]);
+        foreach ($favorites as $favorite) {
+
+            $ressources[] =[ $favorite, $favorite->getRessource()];
+        }
+        return $ressources;
     }
 }
