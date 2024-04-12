@@ -6,6 +6,7 @@ use App\Entity\Favorite;
 use App\Repository\FavoriteRepository;
 use App\Service\AuthService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class FavoriteController extends AbstractController
 {
@@ -22,7 +23,7 @@ class FavoriteController extends AbstractController
          $currentUser = $this->authService->getCurrentUser();
          $already = $this->favoriteRepository->findOneBy(['user' => $currentUser, 'ressource' => $favorite->getRessource()]);
          if ($already instanceof Favorite){
-             throw new \Exception('Already in favorite', 312);
+             throw new HttpException(312, 'Already in favorite');
          }
          $favorite->setUser($currentUser);
          return $favorite;
