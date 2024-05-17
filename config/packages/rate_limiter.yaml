@@ -1,0 +1,6 @@
+framework:
+  rate_limiter:
+    api:
+      policy: 'fixed_window'
+      limit: 500
+      interval: '60 minutes'
