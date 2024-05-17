@@ -19,7 +19,7 @@ class KernelSubscriber implements EventSubscriberInterface
         $this->apiKey = $_ENV['API_KEY'];
     }
 
-    public function onKernelRequest(RequestEvent $event, RateLimiterFactory $apiLimiter): void
+    public function onKernelRequest(RequestEvent $event, RateLimiterFactory $anonymousApiLimiter): void
     {
         $request = $event->getRequest();
         $path = $request->getPathInfo();
