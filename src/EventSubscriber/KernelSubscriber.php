@@ -19,12 +19,12 @@ class KernelSubscriber implements EventSubscriberInterface
         $this->apiKey = $_ENV['API_KEY'];
     }
 
-    public function onKernelRequest(RequestEvent $event, RateLimiterFactory $anonymousApiLimiter): void
+    public function onKernelRequest(RequestEvent $event,RateLimiterFactory $anonymousApiLimiter): void
     {
         $request = $event->getRequest();
         $path = $request->getPathInfo();
 
-        $limiter = $apiLimiter->create($request->getClientIp());
+        $limiter = $anonymousApiLimiter->create($request->getClientIp());
 
         if (false === $limiter->consume(1)->isAccepted()) {
             throw new TooManyRequestsHttpException();
