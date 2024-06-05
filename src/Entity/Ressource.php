@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\AcceptRessourceController;
+use App\Controller\CountRessourceController;
 use App\Controller\RessourceController;
 use App\Repository\RessourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -35,6 +36,13 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
             normalizationContext: ['groups' => ['read:ressource:collection']],
             read: false,
             name: 'accept ressource'
+        ),
+        new Get(
+            uriTemplate: '/ressources/count/',
+            controller: CountRessourceController::class,
+            description: 'Count ressource',
+            read: false,
+            name: 'count ressource'
         ),
     ],
     normalizationContext: ['groups' => ['read:ressource:collection']],
