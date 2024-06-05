@@ -210,6 +210,9 @@ class Ressource
     #[Groups(["read:ressource:collection", 'read:favorite:collection'])]
     public ?string $fileUrl = null;
 
+    #[Groups(["read:ressource:collection", 'read:favorite:collection'])]
+    public bool $isFavorite = false;
+
     #[UploadableField(mapping: 'ressources_image', fileNameProperty: "filePath")]
     #[Groups(['create:ressource:item'])]
     private ?File $file = null;
@@ -513,5 +516,21 @@ class Ressource
         }
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFavorite(): bool
+    {
+        return $this->isFavorite;
+    }
+
+    /**
+     * @param bool $isFavorite
+     */
+    public function setIsFavorite(bool $isFavorite): void
+    {
+        $this->isFavorite = $isFavorite;
     }
 }

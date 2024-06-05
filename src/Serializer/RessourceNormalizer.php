@@ -3,7 +3,10 @@
 namespace App\Serializer;
 
 use App\Entity\Comment;
+use App\Entity\Favorite;
 use App\Entity\Ressource;
+use App\Repository\FavoriteRepository;
+use App\Service\AuthService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
@@ -16,7 +19,9 @@ class RessourceNormalizer implements NormalizerInterface
     public function __construct(
         #[Autowire(service: 'serializer.normalizer.object')]
         private readonly NormalizerInterface $normalizer,
-        private readonly StorageInterface $storage
+        private readonly StorageInterface $storage,
+        private readonly FavoriteRepository $favoriteRepository,
+        private readonly AuthService $authService,
     ) {
     }
 
@@ -38,6 +43,15 @@ class RessourceNormalizer implements NormalizerInterface
     {
         if (isset($context[self::ALREADY_CALLED])) {
             return false;
+        }
+
+        if ($data instanceof Ressource){
+            $isFavorite = $this->favoriteRepository->findOneBy(['ressource' => $data->getId(), 'user' => $this->authService->getCurrentUser()->getId()]);
+            if ($isFavorite instanceof Favorite){
+                $data->setIsFavorite(true);
+            } else{
+                $data->setIsFavorite(false);
+            }
         }
 
         return $data instanceof Ressource;
