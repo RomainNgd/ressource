@@ -5,7 +5,9 @@ namespace App\EventSubscriber;
 use ApiPlatform\Symfony\Security\Exception\AccessDeniedException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 
 class KernelSubscriber implements EventSubscriberInterface
 {
@@ -22,6 +24,12 @@ class KernelSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
         $path = $request->getPathInfo();
 
+//        $limiter = $anonymousApiLimiter->create($request->getClientIp());
+//
+//        if (false === $limiter->consume(1)->isAccepted()) {
+//            throw new TooManyRequestsHttpException();
+//        }
+
         // Vérifie si la requête est faite pour la page /API
         if ($path === '/api/docs') {
             return;
@@ -30,6 +38,8 @@ class KernelSubscriber implements EventSubscriberInterface
         if ($request->headers->get('X-API-Key') !== $this->apiKey) {
             throw new AccessDeniedException('Invalid API key');
         }
+
+
     }
 
     public static function getSubscribedEvents(): array
