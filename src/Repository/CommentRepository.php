@@ -21,6 +21,18 @@ class CommentRepository extends ServiceEntityRepository
         parent::__construct($registry, Comment::class);
     }
 
+    public function countCommentLastFiveDays(): array
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb->select('DATE(c.createdAt) as date, COUNT(c.id) as comment_count')
+            ->where('r.createdAt >= :start_date')
+            ->groupBy('date')
+            ->orderBy('date', 'ASC')
+            ->setParameter('start_date', new \DateTime('-5 days'));
+
+        return $qb->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return Comment[] Returns an array of Comment objects
 //     */
