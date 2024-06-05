@@ -32,25 +32,22 @@ class RessourceRepository extends ServiceEntityRepository
     public function countRessourcesByCategory(): array
     {
         return $this->createQueryBuilder('r')
-            ->select('c.name AS category_name, COUNT(r.id) AS ressource_count')
-            ->join('r.category', 'c')
-            ->groupBy('c.name')
+            ->select('c.title AS category_name, COUNT(r.id) AS ressource_count')
+            ->join('r.ressourceCategory', 'c')
+            ->groupBy('c.title')
             ->getQuery()
             ->getResult();
     }
 
-    public function countRessourcesLastFiveDays(): array
+    public function findRessourcesLastFiveDays(): array
     {
-        $qb = $this->createQueryBuilder('r');
-        $qb->select('DATE(r.createdAt) as date, COUNT(r.id) as ressource_count')
+        return $this->createQueryBuilder('r')
             ->where('r.createdAt >= :start_date')
-            ->groupBy('date')
-            ->orderBy('date', 'ASC')
-            ->setParameter('start_date', new \DateTime('-5 days'));
-
-        return $qb->getQuery()->getResult();
+            ->setParameter('start_date', new \DateTime('-5 days'))
+            ->orderBy('r.createdAt', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
-
 //    /**
 //     * @return Ressource[] Returns an array of Ressource objects
 //     */

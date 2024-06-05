@@ -19,14 +19,31 @@ class CountRessourceController extends AbstractController
     public function __invoke(): JsonResponse
     {
         $commentsByDay = $this->commentRepository->countCommentLastFiveDays();
-        $ressourceByDay = $this->repository->countRessourcesLastFiveDays();
         $all = $this->repository->countTotalRessources();
         $categories = $this->repository->countRessourcesByCategory();
+        $ressourcesLastFiveDays = $this->repository->findRessourcesLastFiveDays();
+
+        // Construire un tableau pour compter les ressources par jour
+        $ressourcesCountByDay = [];
+        $currentDate = new \DateTime('-4 days');
+        for ($i = 0; $i < 5; $i++) {
+            $ressourcesCountByDay[$currentDate->format('Y-m-d')] = 0;
+            $currentDate->modify('+1 day');
+        }
+
+        foreach ($ressourcesLastFiveDays as $ressource) {
+            $date = $ressource->getCreatedAt()->format('Y-m-d');
+            if (isset($ressourcesCountByDay[$date])) {
+                $ressourcesCountByDay[$date]++;
+            } else {
+                $ressourcesCountByDay[$date] = 1;
+            }
+        }
 
         return new JsonResponse([
             'countAllRessource' => $all,
             'ressourceByCategories' => $categories,
-            'ressourceByDays' => $ressourceByDay,
+            'ressourceByDays' => $ressourcesCountByDay,
             'commentByDays' => $commentsByDay,
         ], 200);
     }

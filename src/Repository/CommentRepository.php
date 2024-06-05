@@ -24,8 +24,8 @@ class CommentRepository extends ServiceEntityRepository
     public function countCommentLastFiveDays(): array
     {
         $qb = $this->createQueryBuilder('c');
-        $qb->select('DATE(c.createdAt) as date, COUNT(c.id) as comment_count')
-            ->where('r.createdAt >= :start_date')
+        $qb->select('c.createdAt as date, COUNT(c.id) as comment_count')
+            ->where('c.createdAt >= :start_date')
             ->groupBy('date')
             ->orderBy('date', 'ASC')
             ->setParameter('start_date', new \DateTime('-5 days'));
