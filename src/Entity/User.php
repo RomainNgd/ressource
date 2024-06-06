@@ -84,6 +84,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $firstname = '';
 
     #[ORM\Column]
+    private string $resetToken = '';
+
+    #[ORM\Column]
     #[Groups(["read:ressource:collection","read:user:collection", 'user:create'])]
     private string $lastname = '';
 
@@ -396,5 +399,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResetToken(): string
+    {
+        return $this->resetToken;
+    }
+
+    /**
+     * @param string $resetToken
+     */
+    public function setResetToken(string $resetToken): void
+    {
+        $this->resetToken = $resetToken;
     }
 }

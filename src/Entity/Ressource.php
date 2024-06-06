@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\AcceptRessourceController;
 use App\Controller\CountRessourceController;
+use App\Controller\MyRessourceController;
 use App\Controller\RessourceController;
 use App\Repository\RessourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -44,6 +45,14 @@ use Vich\UploaderBundle\Mapping\Annotation\UploadableField;
             read: false,
             name: 'count ressource'
         ),
+        new Get(
+            uriTemplate: '/my-ressources',
+            controller: MyRessourceController::class,
+            description: 'Get User ressource create',
+            normalizationContext: ['groups' => ['read:ressource:collection']],
+            read: false,
+            name: 'get my Ressource'
+        )
     ],
     normalizationContext: ['groups' => ['read:ressource:collection']],
     denormalizationContext: ['groups' => ['create:ressource:item']],
