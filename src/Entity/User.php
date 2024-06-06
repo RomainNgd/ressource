@@ -7,11 +7,13 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Controller\CurrentUserController;
+use App\Controller\ResetPasswordController;
 use App\Repository\UserRepository;
 use App\State\UserPasswordHasher;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\PseudoTypes\PositiveInteger;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -25,6 +27,16 @@ use Symfony\Component\Serializer\Attribute\Groups;
             description: 'Get current User',
             name: 'get current user',
         ),
+        new Post(
+            uriTemplate: '/reset-password',
+            controller: ResetPasswordController::class,
+            description: 'reset my password'
+        ),
+        new Post(
+            uriTemplate: '/reset-password/',
+            controller: ResetPasswordController::class,
+            description: 'reset my password'
+        )
     ],
 )]
 #[Post(
