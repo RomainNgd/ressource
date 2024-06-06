@@ -19,6 +19,9 @@ class AuthService
 
     public function getCurrentUser(): User
     {
+        if (!$this->security->getUser()){
+            throw new UserNotFoundException();
+        }
         $identifier = $this->security->getUser()->getUserIdentifier();
         $user = $this->getUserOrNull($identifier);
         if (!$user instanceof User){

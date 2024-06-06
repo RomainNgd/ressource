@@ -36,6 +36,17 @@ class RessourceNormalizer implements NormalizerInterface
             $object->setFileUrl( $this->storage->resolveUri($object, 'file'));
         }
 
+        try {
+            $isFavorite = $this->favoriteRepository->findOneBy(['ressource' => $object->getId(), 'user' => $this->authService->getCurrentUser()->getId()]);
+            if ($isFavorite instanceof Favorite){
+                $object->setIsFavorite(true);
+            } else{
+                $object->setIsFavorite(false);
+            }
+        } catch (\Exception){
+            $object->setIsFavorite(false);
+        }
+
         return $this->normalizer->normalize($object, $format, $context);
     }
 
@@ -43,15 +54,6 @@ class RessourceNormalizer implements NormalizerInterface
     {
         if (isset($context[self::ALREADY_CALLED])) {
             return false;
-        }
-
-        if ($data instanceof Ressource){
-            $isFavorite = $this->favoriteRepository->findOneBy(['ressource' => $data->getId(), 'user' => $this->authService->getCurrentUser()->getId()]);
-            if ($isFavorite instanceof Favorite){
-                $data->setIsFavorite(true);
-            } else{
-                $data->setIsFavorite(false);
-            }
         }
 
         return $data instanceof Ressource;
