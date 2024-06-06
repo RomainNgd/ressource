@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\CurrentUserController;
 use App\Controller\ResetPasswordController;
@@ -38,6 +39,15 @@ use Symfony\Component\Serializer\Attribute\Groups;
             description: 'reset my password'
         )
     ],
+)]
+#[Patch(
+    description: 'Edit Account',
+    normalizationContext: ['groups' => ['read:user:collection']],
+    denormalizationContext: ['groups' => ['user:edit']],
+    security: "is_granted('edit', object)",
+    validationContext: ['groups' => ['user:edit']],
+    read: false,
+    name: 'Edit Account',
 )]
 #[Post(
     uriTemplate: '/createAccount',
@@ -84,7 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(['read:user:item', 'user:create'])]
+    #[Groups(['read:user:item', 'user:create', 'user:edit'])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -92,14 +102,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = [];
 
     #[ORM\Column]
-    #[Groups(["read:ressource:collection","read:user:collection", 'user:create'])]
+    #[Groups(["read:ressource:collection","read:user:collection", 'user:create', 'user:edit'])]
     private string $firstname = '';
 
     #[ORM\Column]
     private string $resetToken = '';
 
     #[ORM\Column]
-    #[Groups(["read:ressource:collection","read:user:collection", 'user:create'])]
+    #[Groups(["read:ressource:collection","read:user:collection", 'user:create', 'user:edit'])]
     private string $lastname = '';
 
     /**
