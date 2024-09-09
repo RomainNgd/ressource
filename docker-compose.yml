@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  app:
+    image: php:8.1-fpm
+    container_name: symfony_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - APP_ENV=dev
+    networks:
+      - symfony
+
+  webserver:
+    image: nginx:alpine
+    container_name: symfony_webserver
+    restart: unless-stopped
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./:/var/www/html
+    ports:
+      - "8080:80"
+    depends_on:
+      - app
+    networks:
+      - symfony
+
+  db:
+    image: mysql:8.0
+    container_name: symfony_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: symfony
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: symfony
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - symfony
+
+volumes:
+  db-data:
+
+networks:
+  symfony:
+    driver: bridge
