@@ -8,12 +8,12 @@ set('application', 'ressources');
 set('repository', 'git@github.com:RomainNgd/ressource.git');
 
 // Configurer la machine distante
-host('machine prod')
-    ->setHostname('88.66.110.4')
-    ->set('remote_user', 'mon-romain-ssh')
-    ->set('deploy_path', '/var/www/mon_application')
-    ->set('ssh_multiplexing', true)
-    ->set('branch', 'main');
+host('production')
+    ->setHostname('82.66.110.4')
+    ->setPort(2222)
+    ->set('remote_user', 'romain')
+    ->set('deploy_path', '/var/www/ressource')
+    ->set('identity_file', '~/.ssh/id_rsa');
 
 // Configurer Docker
 desc('Start Docker containers');
