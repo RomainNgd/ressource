@@ -30,7 +30,7 @@ services:
     container_name: symfony_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD:
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: ressource
       MYSQL_USER: base_user
       MYSQL_PASSWORD: root
