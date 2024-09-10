@@ -9,7 +9,7 @@ services:
     volumes:
       - ./:/var/www/html
     environment:
-      - APP_ENV=dev
+      - APP_ENV=prod
     networks:
       - symfony
 
@@ -28,14 +28,14 @@ services:
       - symfony
 
   db:
-    image: mysql:8.0
+    image: mysql:8.0-alpine
     container_name: symfony_db
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: symfony
-      MYSQL_USER: symfony
-      MYSQL_PASSWORD: symfony
+      MYSQL_DATABASE: ressource
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
     volumes:
       - db-data:/var/lib/mysql
     networks:
