@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
-      - ./:/var/www/html
+      - /var/www/ressource:/var/www/html
     environment:
       - APP_ENV=prod
     networks:
@@ -16,8 +16,8 @@ services:
     container_name: symfony_webserver
     restart: unless-stopped
     volumes:
-      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./:/var/www/html
+      - /var/www/ressource/docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /var/ww/ressource:/var/www/html
     ports:
       - "8000:80"
     depends_on:
