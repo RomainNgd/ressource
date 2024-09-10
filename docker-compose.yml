@@ -28,7 +28,7 @@ services:
       - symfony
 
   db:
-    image: mysql:8.0-alpine
+    image: mysql:8.0-debian
     container_name: symfony_db
     restart: unless-stopped
     environment:
