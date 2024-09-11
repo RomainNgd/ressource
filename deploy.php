@@ -3,7 +3,7 @@ namespace Deployer;
 
 require 'recipe/symfony.php';
 
-set('application', 'ressources');
+set('application', 'ressource');
 set('repository', 'git@github.com:RomainNgd/ressource.git');
 
 host('production')
