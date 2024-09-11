@@ -11,8 +11,7 @@ on:
   pull_request:
     branches: [ "main" ]
 
-permissions:
-  contents: read
+concurrency: production_environment
 
 jobs:
   docker-build-test:
@@ -69,7 +68,7 @@ jobs:
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: Test SSH connection
+      - name: Test SSH connection github
         run: ssh -T git@github.com
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
