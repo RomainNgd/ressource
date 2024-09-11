@@ -83,12 +83,6 @@ jobs:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         continue-on-error: false
 
-      - name: Deploy unlock
-        uses: deployphp/action@v1
-        with:
-          dep: deploy:unlock
-          private-key: ${{ secrets.PRIVATE_KEY }}
-
       - name: Deploy
         uses: deployphp/action@v1
         with:
