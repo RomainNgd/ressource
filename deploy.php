@@ -18,7 +18,6 @@ task('deploy', [
     'deploy:prepare',      // Prépare la structure du déploiement
     'deploy:vendors',      // Installe les dépendances Composer
     'deploy:cache:clear',  // Vide le cache Symfony
-    'database:migrate',    // (Optionnel) Migrer la base de données
     'deploy:symlink',      // Met à jour le lien symbolique pour la nouvelle release
     'deploy:unlock',       // Déverrouille le déploiement en cas d'erreur
 ]);
