@@ -40,6 +40,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-
       - name: Install Dependencies
-        run: composer install --no-interaction --ignore-platform-req=ext-sodium
+        run: composer update --ignore-platform-req=ext-sodium | composer install --no-interaction --ignore-platform-req=ext-sodium
       - name: build docker
         run : docker-compose up -d
