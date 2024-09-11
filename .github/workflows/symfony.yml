@@ -39,7 +39,9 @@ jobs:
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
+      - name: Update Dependencies
+        run: composer update --ignore-platform-req=ext-sodium
       - name: Install Dependencies
-        run: composer update --ignore-platform-req=ext-sodium | composer install --no-interaction --ignore-platform-req=ext-sodium
+        run: composer install --no-interaction --ignore-platform-req=ext-sodium
       - name: build docker
         run : docker-compose up -d
