@@ -69,6 +69,26 @@ jobs:
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
+      - name: Add SSH key
+        run: |
+          echo "${{ secrets.PRIVATE_KEY }}" > private_key
+          chmod 600 private_key
+          ssh-add private_key
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh-auth.sock
+
+      - name: Test SSH connection
+        run: ssh -T git@github.com
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        continue-on-error: false
+
+      - name: Deploy unlock
+        uses: deployphp/action@v1
+        with:
+          dep: deploy:unlock
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
       - name: Deploy
         uses: deployphp/action@v1
         with:
