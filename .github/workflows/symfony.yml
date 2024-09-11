@@ -15,12 +15,14 @@ permissions:
   contents: read
 
 jobs:
-  symfony-tests:
+  docker-build-test:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-
+      - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
+        with:
+          php-version: '8.2'
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
 
@@ -41,3 +43,26 @@ jobs:
             ${{ runner.os }}-php-
       - name: build docker
         run : docker-compose up -d
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
+        with:
+          php-version: '8.2'
+      - name: Set up SSH
+        run: |
+          # Crée un répertoire .ssh
+          mkdir -p ~/.ssh
+          # Ajoute la clé privée SSH stockée dans le secret GitHub
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          # Définit les permissions pour la clé privée SSH
+          chmod 600 ~/.ssh/id_rsa
+          # Ajoute le serveur distant à la liste des hôtes connus
+          ssh-keyscan -H 82.66.110.4 >> ~/.ssh/known_hosts
+
+      - name: deploy docker
+        run: php vendor/bin/dep deploy
