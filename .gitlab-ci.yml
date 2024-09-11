@@ -10,7 +10,7 @@ services:
 
 before_script:
   - docker-compose up -d
-  - docker-compose exec -T php composer install
+  - composer install --ignore-platform-req=ext-sodium
 
 cache:
   paths:
