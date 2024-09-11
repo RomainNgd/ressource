@@ -69,6 +69,16 @@ jobs:
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
+      - name: Deploy unlock
+        uses: deployphp/action@v1
+        with:
+          dep: deploy:unlock
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
+      - name: Stop SSH Agent after unlock
+        run: |
+          eval "$(ssh-agent -k)"
+
       - name: Deploy
         uses: deployphp/action@v1
         with:
