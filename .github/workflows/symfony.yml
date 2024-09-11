@@ -68,16 +68,6 @@ jobs:
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: Setup SSH Agent
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_rsa
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh-auth.sock
-
       - name: Test SSH connection github
         run: ssh -T git@github.com
         env:
