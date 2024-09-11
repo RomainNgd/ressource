@@ -74,13 +74,13 @@ jobs:
         with:
           dep: deploy:unlock
           private-key: ${{ secrets.PRIVATE_KEY }}
-
-      - name: Stop SSH Agent after unlock
-        run: |
-          eval "$(ssh-agent -k)"
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh-auth-alt.sock
 
       - name: Deploy
         uses: deployphp/action@v1
         with:
           dep: deploy
           private-key: ${{ secrets.PRIVATE_KEY }}
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh-auth-alt.sock
