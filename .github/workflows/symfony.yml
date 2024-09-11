@@ -74,8 +74,6 @@ jobs:
         with:
           dep: deploy:unlock
           private-key: ${{ secrets.PRIVATE_KEY }}
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh-auth-alt.sock
 
       - name: Deploy
         uses: deployphp/action@v1
