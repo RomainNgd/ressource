@@ -69,14 +69,6 @@ jobs:
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: Add SSH key
-        run: |
-          echo "${{ secrets.PRIVATE_KEY }}" > private_key
-          chmod 600 private_key
-          ssh-add private_key
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh-auth.sock
-
       - name: Test SSH connection
         run: ssh -T git@github.com
         env:
